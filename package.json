@@ -1,0 +1,34 @@
+{
+  "name": "fbta_concept",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "run": "tsc . & node main.js",
+    "build": "tsc .",
+    "fbta-cookie": "node ./dist/cookies.js",
+    "test": "mocha -r ts-node/register Test/**/*.spec.ts"
+  },
+  "keywords": [],
+  "author": "kinonanium",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cheerio": "^0.22.21",
+    "@types/chromedriver": "^81.0.0",
+    "@types/node": "^14.0.19",
+    "@types/selenium-webdriver": "^4.0.9",
+    "@types/mocha": "^8.0.2",
+    "@types/chai": "^4.2.12",
+    "@types/lodash": "^4.14.159",
+    "chromedriver": "^83.0.1",
+    "geckodriver": "^1.19.1",
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "typescript": "^3.9.6"
+  },
+  "dependencies": {
+    "mocha": "^8.1.1",
+    "chai": "^4.2.0",
+    "ts-node": "^8.10.2",
+    "lodash": "^4.17.20"
+  }
+}
