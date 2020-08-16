@@ -3,29 +3,41 @@ import * as path from 'path';
 import * as webdriver from "selenium-webdriver"
 import {path as chrome_path} from "chromedriver"
 import {ServiceBuilder, Options, setDefaultService} from "selenium-webdriver/chrome"
+import {FBTAConfig} from "./fbta-config";
 
 export class FbtaBrowserSelenium {
     private username: string;
     private password: string;
     public driver: webdriver.ThenableWebDriver;
+    private _conf: FBTAConfig
 
-    constructor() {
+    constructor(conf: FBTAConfig) {
         this.username = ''
         this.password = ''
+        this._conf = conf
     }
 
-    public initDriver():Promise<any> {
+    public initDriver(): Promise<any> {
         return new Promise(resolve => {
             let service = new ServiceBuilder(chrome_path).build()
             setDefaultService(service);
+
             this.driver = new webdriver.Builder()
                 .withCapabilities(webdriver.Capabilities.chrome())
                 .forBrowser('chrome')
                 .build();
-            this.driver.then(v => {
-                console.log(this.driver)
+            console.log('Start Sel driver')
+            resolve()
+        })
+    }
 
-            })
+    public setChromeOptions() {
+        return new Promise(resolve => {
+            let chromeOptions;
+            chromeOptions = new Options();
+            chromeOptions.addArguments('-disable-javascript')
+            console.log('chromeOPtions')
+            resolve(chromeOptions)
         })
 
     }

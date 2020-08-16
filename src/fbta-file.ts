@@ -1,5 +1,7 @@
-import {access, mkdir, readFile, writeFile, readFileSync, promises} from "fs";
-import {join} from 'path';
+// import {access, mkdir, readFile, writeFile, readFileSync, promises,existsSync,mkdirSync} from "fs";
+// import * as fs from "fs";
+import * as fs from 'fs';
+import * as pathm from 'path';
 import * as _ from 'lodash'
 
 export class FbtaFile {
@@ -8,12 +10,12 @@ export class FbtaFile {
     }
 
     static absPath(path: string) {
-        return join(__dirname, path)
+        return pathm.join(__dirname, path)
     }
 
     static loadFile(path: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            readFile(path, 'utf8', (err, data) => {
+            fs.readFile(path, 'utf8', (err, data) => {
                 if (err) reject(err)
                 resolve(data)
             })
@@ -21,11 +23,16 @@ export class FbtaFile {
 
     }
 
-    // static isExist(path: string): Promise<any> {
-    //     // return promises.access(path).then(value => value).catch(v => false)
-    // }
+    static createTargetFile(targetDir) {
+        let isSlash = targetDir[targetDir.length - 1] === '/'
+        let dirname = isSlash ? targetDir : pathm.dirname(targetDir)
+        let filename = pathm.basename(targetDir)
+        fs.mkdirSync(dirname, {recursive: true})
+        if (filename && !isSlash) fs.writeFileSync(targetDir, '', 'utf8')
+    }
 
-    static loadJson(jsonPath: string): Promise<any> {
+    static loadJson(jsonPath: string):
+        Promise<any> {
         return new Promise((resolve) => {
             FbtaFile.loadFile(jsonPath).then(data => {
                 let ck = FbtaFile.isJson(data)
@@ -42,8 +49,8 @@ export class FbtaFile {
         }
     }
 
-    static writeJson(path,json: object) {
+    static writeJson(path, json: object) {
         let myJson = JSON.stringify(json)
-        writeFile(FbtaFile.absPath(path), myJson,'utf8',_.noop)
+        fs.writeFile(FbtaFile.absPath(path), myJson, 'utf8', _.noop)
     }
 }

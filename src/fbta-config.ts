@@ -23,7 +23,17 @@ export interface IConfigProps {
     dbName: string
     flowResume: boolean
     usernameSource: UsernameSourceOptions
+    dataPath: string
     configFilePath: string
+    cookieFileName: string
+}
+
+export interface IUser {
+    username: string
+    username_hash: string
+    password: string
+    name: string | null
+    fbid: string | null
 }
 
 interface ISequenceDescription {
@@ -36,16 +46,28 @@ interface ISequenceDescription {
 export class FBTAConfig {
     private conf: IConfigProps
     private logDesc: object
+    private _user: IUser
 
-    constructor() {
+    constructor(username: string) {
         this.loadVar()
+        this._user = {
+            username: username,
+            username_hash: this._usernameHash(username),
+            password: '',
+            name: '',
+            fbid: ''
+        }
+    }
+
+    getDataPath() {
+        return `${this.conf.dataPath}/${this._user.username_hash}`
     }
 
     public getConfigFilePath(): string {
-        return this.conf.configFilePath
+        return `${this.getDataPath}/${this.conf.configFilePath}`
     }
 
-    public setConfigFilePath(path: string){
+    public setConfigFilePath(path: string) {
         this.conf.configFilePath = path
     }
 
@@ -60,6 +82,19 @@ export class FBTAConfig {
     //     this.conf.configFilePath = path
     // }
 
+    private _usernameHash(data: string) {
+        let crypto = require('crypto');
+        return crypto.createHash('md5').update(data).digest("hex");
+    }
+
+    private _checkConfigFileAndCreate() {
+        // FbtaFile.isExist(this.getConfigFilePath(),err=>{
+        //     FbtaFile.writeJson()
+        // })
+
+
+    }
+
     public loadVar() {
         this.conf = {
             headless: true,
@@ -71,20 +106,21 @@ export class FBTAConfig {
             dbName: null,
             flowResume: true,
             usernameSource: UsernameSourceOptions.ENV_PATH,
-            configFilePath: '../Data/fbta_config.json',
+            dataPath: '../Data',
+            configFilePath: 'fbta_config.json',
+            cookieFileName: 'fbta_cookies.json'
         }
 
         this.logDesc = {
             description: '',
-
         }
 
-        console.log(_.keys(this.conf))
-        console.log(this.conf['flowResume-1'])
-        console.log(new Date().toISOString())
+        // console.log(_.keys(this.conf))
+        // console.log(this.conf['flowResume-1'])
+        // console.log(new Date().toISOString())
     }
 
-    public getDefaultConfig(){
+    public getDefaultConfig() {
 
     }
 
@@ -104,5 +140,20 @@ export class FBTAConfig {
 
     }
 
+    setPassword(pwd: string) {
+        this._user.password = pwd
+    }
+
+    getPassword(): string {
+        return this._user.password
+    }
+
+    getUsername(): string {
+        return this._user.username
+    }
+
+    getCookieFilePath() {
+        return this._user.username
+    }
 }
 
