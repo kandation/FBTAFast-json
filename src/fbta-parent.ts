@@ -3,17 +3,20 @@ import * as webdriver from "selenium-webdriver"
 import {FBTAConfig} from "./fbta-config";
 import {FbtaFbUrl} from "./fbta-fb-url";
 import {FbtaCookies} from "./fbta-cookies";
+import {FbtaFile} from "./fbta-file";
 
 export class FbtaParent {
     private _browserSel: FbtaBrowserSelenium
     private _conf: FBTAConfig
-    public _cookie: FbtaCookies
+    private _cookie: FbtaCookies
+    private _cookieData: object
 
     constructor(conf: FBTAConfig) {
         this._conf = conf
         this._cookie = new FbtaCookies(conf)
-
+        this._cookieData = []
     }
+
 
     async loadParent() {
         this._browserSel = new FbtaBrowserSelenium(this._conf);
@@ -21,7 +24,25 @@ export class FbtaParent {
         await this._browserSel.setChromeOptions()
     }
 
-    async runFBLoginGUI(){
+    async runFBInit() {
+        let xx = FbtaFile.isExist(this._conf.getCookieFilePath())
+        console.log(this._conf.getCookieFilePath(), xx)
+        if (xx) {
+            let gg = await this._cookie.getCookiesFromFile()
+            console.log(gg)
+        } else {
+            await this._runFBLoginGUI()
+        }
+    }
+
+    private async _runFBLoginCookies(){
+        await this._browserSel.driver.get(FbtaFbUrl.M_URL)
+        await this._browserSel.driver.manage().addCookie({'name': 'noscript', 'value': '1'})
+
+    }
+
+    private async _runFBLoginGUI() {
+        /* when cookies expire or has not */
         await this._browserSel.driver.get(FbtaFbUrl.M_URL)
         await this._browserSel.driver.manage().addCookie({'name': 'noscript', 'value': '1'})
         await this._browserSel.driver.get('https://m.facebook.com').then(() => {
@@ -40,19 +61,19 @@ export class FbtaParent {
 
 
         await this._browserSel.driver.wait(webdriver.until.elementLocated(webdriver.By.id('m_home_notice'))).then(el => {
-            this._browserSel.driver.get('https://m.facebook.com/me/allactivity?refid=17')
+            this._browserSel.driver.get(`${FbtaFbUrl.M_URL}/me/allactivity?refid=17`)
             this._browserSel.driver.getCurrentUrl().then(value => {
                 console.log(value)
             });
             this._browserSel.driver.manage().getCookies().then(value => {
-                console.log(value.length, value)
                 this.saveCookie(value)
             })
         })
+
+
     }
 
-    async saveCookie(value){
+    async saveCookie(value) {
         this._cookie.writeCookie(value)
-
     }
 }

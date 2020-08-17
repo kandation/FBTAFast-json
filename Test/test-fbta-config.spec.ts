@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('Config File Test',
     () => {
         it('should return null', function () {
-            let x = conf.LoadConfigFile('./Data/fbta_config.json')
+            let x = conf.LoadConfigFile('./Data/fbta_cookies.json')
             assert.isNotNull(x)
         });
         it('should print error if config path is null', () => {

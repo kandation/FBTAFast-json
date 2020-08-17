@@ -23,6 +23,10 @@ export class FbtaFile {
 
     }
 
+    static isExist(path: string){
+        return fs.existsSync(path)
+    }
+
     static createTargetFile(targetDir) {
         let isSlash = targetDir[targetDir.length - 1] === '/'
         let dirname = isSlash ? targetDir : pathm.dirname(targetDir)

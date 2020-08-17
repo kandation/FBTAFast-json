@@ -64,10 +64,10 @@ export class FBTAConfig {
     }
 
     public getConfigFilePath(): string {
-        return `${this.getDataPath}/${this.conf.configFilePath}`
+        return `${this.getDataPath()}/${this.conf.configFilePath}`
     }
 
-    public setConfigFilePath(path: string) {
+    private setConfigFilePath(path: string) {
         this.conf.configFilePath = path
     }
 
@@ -84,7 +84,7 @@ export class FBTAConfig {
 
     private _usernameHash(data: string) {
         let crypto = require('crypto');
-        return crypto.createHash('md5').update(data).digest("hex");
+        return crypto.createHash('md5').update(data).digest("hex").slice(0,10)
     }
 
     private _checkConfigFileAndCreate() {
@@ -93,6 +93,14 @@ export class FBTAConfig {
         // })
 
 
+    }
+
+    public loadConfigFromFile(){
+        if(FbtaFile.isExist(this.getConfigFilePath())){
+
+        }else{
+
+        }
     }
 
     public loadVar() {
@@ -124,10 +132,9 @@ export class FBTAConfig {
 
     }
 
-    private configFileCreateIfNone() {
+    private _configFileCreateIfNone() {
         mkdir('Data', _.noop)
-        writeFile('./Data/fbta_config.json', '123123', 'utf8', _.noop)
-
+        writeFile(this.getConfigFilePath(), '123123', 'utf8', _.noop)
     }
 
     public LoadConfigFile(config_path: string) {
@@ -153,7 +160,7 @@ export class FBTAConfig {
     }
 
     getCookieFilePath() {
-        return this._user.username
+        return `${this.getDataPath()}/${this.conf.cookieFileName}`
     }
 }
 
