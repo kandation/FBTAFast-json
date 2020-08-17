@@ -42,17 +42,4 @@ export class FbtaBrowserSelenium {
 
     }
 
-    public loadCookies(): Promise<any> {
-        return new Promise(resolve => {
-            try {
-                let file_data = fs.readFileSync(path.join(__dirname, './sync/cookies.json'), {encoding: 'utf8'})
-                let js = JSON.parse(file_data)
-            } catch (e) {
-
-            }
-            this.driver.get('https://www.google.com').then(res => {
-                console.log(this.driver.getTitle())
-            })
-        })
-    }
 }
