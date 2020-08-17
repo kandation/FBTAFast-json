@@ -23,7 +23,7 @@ export class FbtaFile {
 
     }
 
-    static isExist(path: string){
+    static isExist(path: string) {
         return fs.existsSync(path)
     }
 
@@ -35,12 +35,13 @@ export class FbtaFile {
         if (filename && !isSlash) fs.writeFileSync(targetDir, '', 'utf8')
     }
 
-    static loadJson(jsonPath: string):
-        Promise<any> {
+    static loadJson(jsonPath: string): Promise<any> {
         return new Promise((resolve) => {
             FbtaFile.loadFile(jsonPath).then(data => {
                 let ck = FbtaFile.isJson(data)
                 if (ck) resolve(ck)
+            }).catch(reason => {
+                console.error('Error',reason)
             })
         })
     }

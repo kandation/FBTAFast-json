@@ -8,7 +8,7 @@ import {constants} from "os";
 
 let conf: FBTAConfig
 beforeEach(() => {
-    conf = new FBTAConfig()
+    conf = new FBTAConfig('username')
 })
 
 
@@ -20,7 +20,7 @@ describe('Config File Test',
         });
         it('should print error if config path is null', () => {
             expect(() => {
-                return conf.configFilePath = './Data/fbta_config.json2'
+                return conf.getConfigFilePath()
 
             }).to.throw()
 

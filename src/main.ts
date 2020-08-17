@@ -14,7 +14,7 @@ config = new FBTAConfig(ENV_USERNAME)
 config.setPassword(ENV_PASSWORD)
 
 console.log(config.getConfigFilePath())
-// x()
+
 
 let bw = new FbtaParent(config)
 bw.loadParent().then(value => {
@@ -22,9 +22,6 @@ bw.loadParent().then(value => {
 })
 
 
-async function x() {
-    let a = cookies.getCookiesFromFile()
-}
 
 
 

@@ -25,19 +25,25 @@ export class FbtaParent {
     }
 
     async runFBInit() {
-        let xx = FbtaFile.isExist(this._conf.getCookieFilePath())
-        console.log(this._conf.getCookieFilePath(), xx)
-        if (xx) {
-            let gg = await this._cookie.getCookiesFromFile()
-            console.log(gg)
+        let _checkCookiesFIlePath = FbtaFile.isExist(this._conf.getCookieFilePath())
+        console.info(':PARENT: Get Cookies from File', this._conf.getCookieFilePath(), _checkCookiesFIlePath)
+        if (_checkCookiesFIlePath) {
+            await this._cookie.getCookiesFromFile()
+            await this._runFBLoginCookies()
         } else {
             await this._runFBLoginGUI()
         }
     }
 
-    private async _runFBLoginCookies(){
-        await this._browserSel.driver.get(FbtaFbUrl.M_URL)
+    private async _runFBLoginCookies() {
+        await this._browserSel.driver.get(FbtaFbUrl.M_URL).then(value => {
+            let js: Array<any> = this._cookie.getCookies()
+            for (let i = 0; i < this._cookie.getCookies().length; i++) {
+                this._browserSel.driver.manage().addCookie(js[i])
+            }
+        })
         await this._browserSel.driver.manage().addCookie({'name': 'noscript', 'value': '1'})
+        await this._browserSel.driver.get(FbtaFbUrl.M_URL)
 
     }
 

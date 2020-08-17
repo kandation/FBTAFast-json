@@ -1,10 +1,18 @@
 import {FbtaFile} from "./fbta-file"
 import {FBTAConfig} from "./fbta-config"
+import {keys} from 'lodash'
+
+function _cookieCleanSameSite(js: any) {
+    for (let i = 0; i < js.length; i++) {
+        if (keys(js[i]).indexOf('sameSite'))
+            delete js[i]['sameSite']
+    }
+    return js
+}
 
 export class FbtaCookies {
     private conf: FBTAConfig
-    private fbtaFile: Promise<string>
-    private _cookies: object
+    private _cookies: Array<Object>
 
     constructor(_conf: FBTAConfig) {
         this.conf = _conf
@@ -12,30 +20,35 @@ export class FbtaCookies {
     }
 
 
-    public getCookiesFromFile() {
+    public async getCookiesFromFile() {
+        this._cookies = await this._loadJson2Cookies()
         return this._loadJson2Cookies()
     }
 
 
-    private async  _loadJson2Cookies() {
-        return await FbtaFile.loadJson(this.conf.getCookieFilePath()).then(js => {
-            return this._cookieCleanSameSite(js)
-        }).catch(reason => {
-            // When not has cookies file or Error. Send signal call parent Node
-            console.warn(reason)
-            return []
-        })
+    private async _loadJson2Cookies() {
+        try {
+            let x = await FbtaFile.loadJson(this.conf.getCookieFilePath())
+            return await _cookieCleanSameSite(x)
+        } catch (e) {
+
+        }
+        return []
+
+
+        // // When not has cookies file or Error. Send signal call parent Node
+        //     // console.warn(reason)
+        //     return [{}]
+        // }))
     }
 
-    private _cookieCleanSameSite(js: any) {
-        for (let i = 0; i < js.length; i++) {
-            delete js[i]['sameSite']
-        }
-        return js
-    }
 
     writeCookie(json: object) {
         FbtaFile.createTargetFile(this.conf.getConfigFilePath())
         FbtaFile.writeJson(this.conf.getCookieFilePath(), json)
+    }
+
+    getCookies(): Array<Object> {
+        return this._cookies
     }
 }
