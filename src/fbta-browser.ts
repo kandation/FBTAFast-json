@@ -6,14 +6,14 @@ import {ServiceBuilder, Options, setDefaultService} from "selenium-webdriver/chr
 import {FBTAConfig} from "./fbta-config";
 
 export class FbtaBrowserSelenium {
-    private username: string;
-    private password: string;
+    private _username: string;
+    private _password: string;
     public driver: webdriver.ThenableWebDriver;
     private _conf: FBTAConfig
 
     constructor(conf: FBTAConfig) {
-        this.username = ''
-        this.password = ''
+        this._username = ''
+        this._password = ''
         this._conf = conf
     }
 
